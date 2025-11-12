@@ -1,31 +1,32 @@
 document.addEventListener("DOMContentLoaded", () => {
     const searchBtn = document.getElementById("searchBtn");
     const searchField = document.getElementById("searchField");
+    const resultDiv = document.getElementById("result");
   
-    function fetchAndAlert() {
-      const q = searchField.value.trim();
-      const url = "superheroes.php?query=" + encodeURIComponent(q);
+    function fetchData() {
+      const query = searchField.value.trim();
+      const url = "superheroes.php?query=" + encodeURIComponent(query);
   
-      // fetch text from PHP endpoint
+      resultDiv.innerHTML = "<p>Loading...</p>"; // show loading text
+  
       fetch(url)
-        .then(response => {
-          if (!response.ok) throw new Error("Network response was not OK");
-          return response.text();
+        .then(response => response.text())
+        .then(data => {
+          // Show the PHP response inside the result div (not alert)
+          resultDiv.innerHTML = data;
         })
-        .then(text => {
-          // show whatever HTML/text PHP returned inside an alert
-          alert(text);
-        })
-        .catch(err => {
-          console.error(err);
-          alert("There was an error fetching the superhero list.");
+        .catch(error => {
+          resultDiv.innerHTML = "<p>There was an error fetching data.</p>";
+          console.error(error);
         });
     }
   
-    searchBtn.addEventListener("click", fetchAndAlert);
+    searchBtn.addEventListener("click", fetchData);
   
-    // optional: pressing Enter runs the search
+    // Optional: Pressing "Enter" also searches
     searchField.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") fetchAndAlert();
+      if (e.key === "Enter") {
+        fetchData();
+      }
     });
   });
