@@ -63,10 +63,31 @@ $superheroes = [
   ], 
 ];
 
-?>
+// Get the query string from the URL
+$query = $_GET['query'] ?? '';
+$query = trim($query);
 
-<ul>
-<?php foreach ($superheroes as $superhero): ?>
-  <li><?= $superhero['alias']; ?></li>
-<?php endforeach; ?>
-</ul>
+if ($query === '') {
+    // If no search query, show the full list
+    echo "<ul>";
+    foreach ($superheroes as $hero) {
+        echo "<li>" . htmlspecialchars($hero['alias']) . "</li>";
+    }
+    echo "</ul>";
+} else {
+    // Search for a matching hero by alias or name
+    $found = false;
+    foreach ($superheroes as $hero) {
+        if (strcasecmp($hero['name'], $query) == 0 || strcasecmp($hero['alias'], $query) == 0) {
+            echo "<h3>" . htmlspecialchars($hero['alias']) . "</h3>";
+            echo "<h4>" . htmlspecialchars($hero['name']) . "</h4>";
+            echo "<p>" . htmlspecialchars($hero['biography']) . "</p>";
+            $found = true;
+            break;
+        }
+    }
+
+    if (!$found) {
+        echo "<p>Superhero not found</p>";
+    }
+}
